@@ -42,6 +42,26 @@ func TestLdapServer1(t *testing.T) {
                         "inetOrgPerson",
                     },
                 },
+                Skip: false,
+            })
+        } else if req.FilterAttr == "other" {
+            // with a query like ("other=<name>") no element will be returned
+            // to simulate a "no user found" case
+            ret = append(ret, &LDAPSimpleSearchResultEntry{
+                // all values of DN and Attrs will not be evaluated
+                DN: "cn=" + req.FilterValue + "," + req.BaseDN,
+                Attrs: map[string]interface{}{
+                    "sn":            req.FilterValue,
+                    "cn":            req.FilterValue,
+                    "uid":           req.FilterValue,
+                    "homeDirectory": "/home/" + req.FilterValue,
+                    "objectClass": []string{
+                        "top",
+                        "posixAccount",
+                        "inetOrgPerson",
+                    },
+                },
+                Skip: true,
             })
         }
 
@@ -80,4 +100,27 @@ func TestLdapServer1(t *testing.T) {
         t.Fatalf("Should have found exactly one result")
     }
 
+    // query a "non-existing" user
+    b, err = exec.Command("/usr/bin/ldapsearch",
+        `-H`,
+        `ldap://127.0.0.1:10000/`,
+        `-Dcn=Joe Dimaggio,dc=example,dc=net`,
+        `-wmarylinisthebomb`,
+        `-v`,
+        `-bou=people,dc=example,dc=net`,
+        `(other=yeti)`,
+    ).CombinedOutput()
+    fmt.Printf("RESULT1: %s\n", string(b))
+    if err != nil {
+        t.Fatalf("Error executing: %v", err)
+    }
+
+    bstr = string(b)
+
+    if strings.Contains(bstr, "dn: cn=yeti,ou=people,dc=example,dc=net") {
+        t.Fatalf("Find unexpected result string")
+    }
+    if strings.Contains(bstr, "numEntries: ") {
+        t.Fatalf("Should not have found any result")
+    }
 }

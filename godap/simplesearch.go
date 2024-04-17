@@ -93,6 +93,7 @@ func ParseLDAPSimpleSearchRequestPacket(p *ber.Packet) (*LDAPSimpleSearchRequest
 type LDAPSimpleSearchResultEntry struct {
     DN    string                 // DN of this search result
     Attrs map[string]interface{} // map of attributes
+    Skip  bool                   // flag to skip processing, "fake" no user found
 }
 
 func (e *LDAPSimpleSearchResultEntry) MakePacket(msgid int64) *ber.Packet {
@@ -213,10 +214,12 @@ func (h *LDAPSimpleSearchFuncHandler) ServeLDAP(ssn *LDAPSession, p *ber.Packet)
     // format each result
     ret := make([]*ber.Packet, 0)
     for _, resitem := range res {
-        resultPacket := resitem.MakePacket(msgid)
-        // fmt.Printf("--------------------\n")
-        // ber.PrintPacket(resultPacket)
-        ret = append(ret, resultPacket)
+        if !resitem.Skip {
+            resultPacket := resitem.MakePacket(msgid)
+            // fmt.Printf("--------------------\n")
+            // ber.PrintPacket(resultPacket)
+            ret = append(ret, resultPacket)
+        }
     }
 
     // end with a done packet
