@@ -63,7 +63,7 @@ func ParseLDAPSimpleSearchRequestPacket(p *ber.Packet) (*LDAPSimpleSearchRequest
                 childVal := getContextValue(child)
                 if childVal != "" {
                     if ret != "" {
-                        ret += ","
+                        ret += ";"
                     }
                     ret += childVal
                 }
@@ -77,7 +77,7 @@ func ParseLDAPSimpleSearchRequestPacket(p *ber.Packet) (*LDAPSimpleSearchRequest
             value := getContextValue(rps[index])
             if value != "" {
                 if ret.FilterValue != "" {
-                    ret.FilterValue += ","
+                    ret.FilterValue += ";"
                 }
                 ret.FilterValue += value
             }
