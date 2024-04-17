@@ -6,6 +6,8 @@
 # Folders
 _obj
 _test
+/bazel-*
+.idea
 
 # Architecture specific extensions/prefixes
 *.[568vq]
@@ -22,3 +24,11 @@ _testmain.go
 *.exe
 *.test
 *.prof
+
+# Test binary, build with `go test -c`
+*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+
+/ldap-mock

@@ -2,8 +2,7 @@ package godap
 
 import (
 	"fmt"
-
-	"github.com/go-asn1-ber/asn1-ber"
+	"gopkg.in/asn1-ber.v1"
 )
 
 // a simplified ldap search request

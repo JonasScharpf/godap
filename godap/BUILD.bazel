@@ -1,0 +1,19 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "godap.go",
+        "simplesearch.go",
+        "tls.go",
+    ],
+    importpath = "github.com/JonasScharpf/godap/godap",
+    visibility = ["//visibility:public"],
+    deps = ["@in_gopkg_asn1_ber_v1//:go_default_library"],
+)
+
+go_test(
+    name = "go_default_test",
+    srcs = ["godap_test.go"],
+    embed = [":go_default_library"],
+)
